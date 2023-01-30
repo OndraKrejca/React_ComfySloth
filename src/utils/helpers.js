@@ -1,3 +1,7 @@
-export const formatPrice = () => {}
+export const formatPrice = (price) => {
 
-export const getUniqueValues = () => {}
+    const newPrice = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format((price / 100).toFixed(2))
+    return newPrice
+}
+
+export const getUniqueValues = () => { }
