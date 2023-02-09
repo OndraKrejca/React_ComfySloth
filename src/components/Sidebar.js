@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import logo from '../assets/logo.svg'
 import { Link } from 'react-router-dom'
 import { useProductsContext } from '../context/products_context'
@@ -9,8 +9,8 @@ import CartButtons from './CartButtons'
 import { useUserContext } from '../context/user_context'
 
 const Sidebar = () => {
-
   const { isSidebarOpen, closeSidebar } = useProductsContext()
+  const { myUser } = useUserContext()
 
   return (
     <SidebarContainer>
@@ -27,13 +27,19 @@ const Sidebar = () => {
 
             return (
               <li key={id}>
-                <Link to={url} onClick={closeSidebar} >{text}</Link>
+                <Link to={url} onClick={closeSidebar}>
+                  {text}
+                </Link>
               </li>
             )
           })}
-          <li>
-            <Link to='/checkout' onClick={closeSidebar}>checkout</Link>
-          </li>
+          {myUser && (
+            <li>
+              <Link to='/checkout' onClick={closeSidebar}>
+                checkout
+              </Link>
+            </li>
+          )}
         </ul>
 
         <CartButtons />

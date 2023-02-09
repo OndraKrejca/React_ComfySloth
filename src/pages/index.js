@@ -1,13 +1,25 @@
-import Home from "./HomePage"
-import Product from "./ProductsPage"
-import SingleProduct from "./SingleProductPage"
-import About from "./AboutPage"
-import Cart from "./CartPage"
-import Error from "./ErrorPage"
-import Checkout from "./CheckoutPage"
-import PrivateRoute from "./PrivateRoute"
+import Home from './HomePage'
+import Product from './ProductsPage'
+import SingleProduct from './SingleProductPage'
+import About from './AboutPage'
+import Cart from './CartPage'
+import Error from './ErrorPage'
+import Checkout from './CheckoutPage'
+import PrivateRoute from './PrivateRoute'
+import AuthWrapper from './AuthWrapper'
 
-//Share 
-import Sharepage from "./Sharepage"
+//Share
+import Sharepage from './Sharepage'
 
-export { Home, Product, SingleProduct, About, Cart, Error, Checkout, PrivateRoute, Sharepage }
+export {
+  Home,
+  Product,
+  SingleProduct,
+  About,
+  Cart,
+  Error,
+  Checkout,
+  PrivateRoute,
+  Sharepage,
+  AuthWrapper,
+}
