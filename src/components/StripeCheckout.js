@@ -1,26 +1,86 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { loadStripe } from '@stripe/stripe-js'
-import {
-  CardElement,
-  useStripe,
-  Elements,
-  useElements,
-} from '@stripe/react-stripe-js'
-import axios from 'axios'
+
 import { useCartContext } from '../context/cart_context'
 import { useUserContext } from '../context/user_context'
 import { formatPrice } from '../utils/helpers'
-import { useHistory } from 'react-router-dom'
-
-const CheckoutForm = () => {
-  return <h4>hello from Stripe Checkout </h4>
-}
+import { useNavigate } from 'react-router-dom'
 
 const StripeCheckout = () => {
+  const { myUser } = useUserContext()
+  const { total_amount, shipping_fee, clearCart } = useCartContext()
+
+  const [cardNumber, setCardNumber] = useState('')
+  const [cardCorrect, setCardCorrect] = useState(false)
+  const [paySuccess, setPaySuccess] = useState(false)
+  const focusInpt = useRef()
+
+  const cardAprrove = 123456
+  const navigate = useNavigate()
+
+  const correctionNumber = () => {
+    setCardCorrect(false)
+
+    if (parseInt(cardNumber) === cardAprrove) {
+      setCardCorrect(true)
+    } else {
+      return
+    }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (cardCorrect) {
+      setPaySuccess(true)
+      focusInpt.current.blur()
+      setTimeout(() => {
+        navigate('/')
+        clearCart()
+      }, 4000)
+    }
+  }
+
+  useEffect(() => {
+    correctionNumber()
+  }, [cardNumber])
+
+  if (!myUser) {
+    return (
+      <Wrapper>
+        <h1>Loading...</h1>
+      </Wrapper>
+    )
+  }
+
   return (
     <Wrapper>
-      <CheckoutForm />
+      {!paySuccess ? (
+        <h4>Hello, {myUser.name}</h4>
+      ) : (
+        <h4>Thank you for your order</h4>
+      )}
+
+      <p>Your total is {formatPrice(total_amount + shipping_fee)} </p>
+
+      <p>Test Card Number: {cardAprrove}</p>
+
+      <form type='submit' onSubmit={handleSubmit}>
+        <label htmlFor='card'>Your card number</label>
+        <input
+          id='card'
+          ref={focusInpt}
+          type='text'
+          value={cardNumber}
+          onChange={(e) => setCardNumber(e.target.value)}
+        ></input>
+
+        <button
+          className={!cardCorrect ? 'button-uncorrect' : 'button-correct'}
+        >
+          Pay
+        </button>
+        {paySuccess && <p className='paragraph'>Your payment is correct!</p>}
+      </form>
     </Wrapper>
   )
 }
@@ -37,7 +97,7 @@ const Wrapper = styled.section`
   }
   input {
     border-radius: 6px;
-    margin-bottom: 6px;
+    margin-bottom: 1rem;
     padding: 12px;
     border: 1px solid rgba(50, 50, 93, 0.1);
     max-height: 44px;
@@ -93,6 +153,15 @@ const Wrapper = styled.section`
     box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
     width: 100%;
   }
+
+  .button-correct {
+    background: #3cf557;
+  }
+
+  .button-uncorrect {
+    background: #5469d4;
+  }
+
   button:hover {
     filter: contrast(115%);
   }
@@ -148,6 +217,11 @@ const Wrapper = styled.section`
     -webkit-animation: loading 2s infinite ease;
     animation: loading 2s infinite ease;
   }
+
+  .paragraph {
+    margin-top: 1rem;
+  }
+
   @keyframes loading {
     0% {
       -webkit-transform: rotate(0deg);
